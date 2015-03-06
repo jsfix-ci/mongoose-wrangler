@@ -17,7 +17,11 @@ class MongooseWrangler extends EventEmitter
   @mongoose: mongoose
 
   constructor: (@options={}) ->
-    @connected = false
+    # Flag signalling that we connected at least once. Mongoose's auto-reconnect only kicks in
+    # once we've connected once.
+    @hasConnected = false
+    # Flag allowing us to differentiate between an intended disconnect and an accidental disconnect.
+    @keepConnected = true
 
     # Options are provided using an options object at construction. These are the defaults.
     @options.debug ?= false
@@ -38,23 +42,25 @@ class MongooseWrangler extends EventEmitter
     # Connect to mongoDB
     @connect()
 
-    # Connection open handler
-    mongoose.connection.on 'open', =>
-      console.log "Connected to mongoDB"
-      @connected = true
+    # Handle mongoose 'connected' event.
+    mongoose.connection.on 'connected', =>
+      console.log "mongoose-wrangler: Connected to mongoDB"
+      @hasConnected = true
       @emit 'connected'
 
-    # Mongoose error handler
+    # Handle mongoose 'error' event.
     mongoose.connection.on 'error', (err) =>
-      console.log "mongoDB #{err}"
-      @connected = false
+      console.log "mongoose-wrangler: mongoDB error: #{err}"
 
     # Disconnected notice, let mongoose reconnect automatically
     mongoose.connection.on 'disconnected', =>
-      @connected = false
       @emit 'disconnected'
-      if @keepConnected
-        console.log "Reconnecting to mongoDB"
+      if not @hasConnected and @keepConnected
+        console.log "mongoose-wrangler: Reconnecting to mongoDB"
+        setTimeout =>
+          @connect()
+        , 1000
+
 
     # Find and load all mongoose models in the provided path
     if fs.existsSync @options.modelPath
@@ -82,7 +88,7 @@ class MongooseWrangler extends EventEmitter
   connect: ->
     @keepConnected = true
     uri = "mongodb://#{@options.address}/#{@options.db}"
-    console.log "Connecting to #{uri}" if @options.debug
+    console.log "Connecting to mongoDB at #{uri}" if @options.debug
     options =
       server:
         auto_reconnect: true
@@ -96,10 +102,23 @@ class MongooseWrangler extends EventEmitter
   #
   disconnect: ->
     @keepConnected = false
-    console.log "Disconnecting mongoDB"
+    console.log "mongoose-wrangler: Disconnecting from mongoDB"
     mongoose.disconnect()
 
 #
 # Exports
 #
 module.exports = MongooseWrangler
+
+#
+# Self-test
+#
+main = ->
+  x = new MongooseWrangler
+    debug: true
+
+  setTimeout ->
+    x.disconnect()
+  , 5000
+
+do main if require.main is module
