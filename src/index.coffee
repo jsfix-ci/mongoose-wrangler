@@ -13,6 +13,7 @@ class MongooseWrangler extends EventEmitter
     @connected = false
 
     # Options are provided using an options object at construction. These are the defaults.
+    @options.debug ?= false
     @options.address ?= "127.0.0.1"
     @options.db ?= "test"
     @options.datatable ?= false
@@ -52,12 +53,14 @@ class MongooseWrangler extends EventEmitter
     if fs.existsSync @options.modelPath
       fs.readdirSync(@options.modelPath).forEach (file) ->
         if file.match /\.js|coffee$/
+          console.log "Loading mongoose model: #{file}" if @options.debug
           require path.join(@options.modelPath, file)
 
   #
   # Register the mongoose-datatable plugin
   #
   useDataTable: ->
+    console.log "Registering mongoose-datatable plugin" if @options.debug
     DataTable = require 'mongoose-datatable'
     DataTable.configure
       verbose: false
