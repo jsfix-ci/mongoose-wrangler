@@ -51,10 +51,12 @@ class MongooseWrangler extends EventEmitter
 
     # Find and load all mongoose models in the provided path
     if fs.existsSync @options.modelPath
-      fs.readdirSync(@options.modelPath).forEach (file) ->
+      fs.readdirSync(@options.modelPath).forEach (file) =>
         if file.match /\.js|coffee$/
           console.log "Loading mongoose model: #{file}" if @options.debug
           require path.join(@options.modelPath, file)
+    else
+      console.log "No mongoose models found in #{@options.modelPath}" if @options.debug
 
   #
   # Register the mongoose-datatable plugin
