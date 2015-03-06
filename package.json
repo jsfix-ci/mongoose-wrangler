@@ -1,10 +1,10 @@
 {
-  "name": "",
-  "version": "0.0.0",
+  "name": "mongoose-wrangler",
+  "version": "0.1.0",
   "author": "Mike Smiley <msmiley@alumni.rice.edu>",
-  "url": "https://github.com/msmiley/",
+  "url": "https://github.com/msmiley/mongoose-wrangler",
   "main": "./lib",
-  "repository": "msmiley/.git",
+  "repository": "msmiley/mongoose-wrangler.git",
   "scripts": {
     "docs": "cake docs",
     "prepublish": "cake build; cake test docs",
@@ -16,9 +16,9 @@
     "jasmine-node": "^1.14.5"
   },
   "dependencies": {
-
+    "mongoose": "^3.8.24",
+    "mongoose-datatable": "^0.3.1"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "license": "MIT"
 }

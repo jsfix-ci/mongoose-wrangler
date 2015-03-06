@@ -1,0 +1,8 @@
+--name       "mongoose-wrangler"
+--readme     README.md
+--title      "Mongoose Wrangler Documentation"
+--quiet
+--extension  coffee
+--output     ./docs
+./src
+-
