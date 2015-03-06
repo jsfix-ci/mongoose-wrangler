@@ -67,9 +67,9 @@ class MongooseWrangler extends EventEmitter
   #
   # Connect Mongoose to mongoDB
   #
-  connect: =>
+  connect: ->
     @keepConnected = true
-    uri = "mongodb://#{@address}/#{@db}"
+    uri = "mongodb://#{@options.address}/#{@options.db}"
     options =
       server:
         auto_reconnect: true
