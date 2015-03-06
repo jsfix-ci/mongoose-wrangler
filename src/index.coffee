@@ -2,6 +2,10 @@ fs = require 'fs'
 path = require 'path'
 { EventEmitter } = require 'events'
 
+# Mongoose is static, but only for the module instance which was loaded. Mongoose-wrangler will
+# install it's own mongoose in `node_modules`, so user code must ask mongoose-wrangler for that
+# instance. If user code does a `mongoose = require('mongoose')`, that var will point to a
+# different mongoose.
 mongoose = require 'mongoose'
 
 #
@@ -9,6 +13,9 @@ mongoose = require 'mongoose'
 # mongoose models. It also takes care of registering some mongoose plugins.
 #
 class MongooseWrangler extends EventEmitter
+  # Static property for accessing the mongoose wrangled by this module.
+  @mongoose: mongoose
+
   constructor: (@options={}) ->
     @connected = false
 
