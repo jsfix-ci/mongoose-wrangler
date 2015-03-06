@@ -75,6 +75,7 @@ class MongooseWrangler extends EventEmitter
   connect: ->
     @keepConnected = true
     uri = "mongodb://#{@options.address}/#{@options.db}"
+    console.log "Connecting to #{uri}" if @options.debug
     options =
       server:
         auto_reconnect: true
