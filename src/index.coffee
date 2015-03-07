@@ -1,10 +1,14 @@
+# **Mongoose Wrangler** takes the guesswork out of managing a mongoose-powered connection to MongoDB.
+# Mongoose provides auto-reconnect and other niceties, but there is still some setup involved.
+# Wrangler attempts to automate as much as possible, including loading of mongoose model definition files.
+
 fs = require 'fs'
 path = require 'path'
 { EventEmitter } = require 'events'
 
 # Mongoose is static, but only for the module instance which was loaded. Mongoose-wrangler will
 # install it's own mongoose in `node_modules`, so user code must ask mongoose-wrangler for that
-# instance. If user code does a `mongoose = require('mongoose')`, that var will point to a
+# instance. If user code does a `mongoose = require('mongoose')`, that var may point to a
 # different mongoose.
 mongoose = require 'mongoose'
 
