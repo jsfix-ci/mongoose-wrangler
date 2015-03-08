@@ -21,10 +21,11 @@ MongooseWrangler = require 'mongoose-wrangler'
 
 # initialize with options
 mw = new MongooseWrangler
-  address: "192.168.0.2"
-  db: "mydb"
-  datatable: true
-  modelPath: "./db-models"
+  debug: true              # default: false
+  address: "192.168.0.2"   # default: "127.0.0.1"
+  db: "mydb"               # default: "test"
+  datatable: true          # default: false
+  modelPath: "./db-models" # default: "./models"
 
 # manually disconnect
 mw.disconnect()
