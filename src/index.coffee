@@ -19,6 +19,7 @@ mongoose = require 'mongoose'
 class MongooseWrangler extends EventEmitter
   # Static property for accessing the mongoose wrangled by this module.
   @mongoose: mongoose
+  @gridfs: undefined
 
   constructor: (@options={}) ->
     # Flag signalling that we connected at least once. Mongoose's auto-reconnect only kicks in
@@ -32,6 +33,7 @@ class MongooseWrangler extends EventEmitter
     @options.address ?= "127.0.0.1"
     @options.db ?= "test"
     @options.datatable ?= false
+    @options.gridfs ?= false
     @options.modelPath ?= "./models"
 
     @configureMongoose()
@@ -45,6 +47,10 @@ class MongooseWrangler extends EventEmitter
 
     # Connect to mongoDB
     @connect()
+
+    if @options.gridfs
+      mongoose.connection.once 'open', =>
+        @useGridFs()
 
     # Handle mongoose 'connected' event.
     mongoose.connection.on 'connected', =>
@@ -85,6 +91,15 @@ class MongooseWrangler extends EventEmitter
       verbose: false
       debug: false
     mongoose.plugin DataTable.init
+
+  #
+  # Set up gridfs-stream
+  #
+  useGridFs: ->
+    console.log "Registering gridfs-stream plugin" if @options.debug
+    Grid = require 'gridfs-stream'
+    Grid.mongo = mongoose.mongo
+    MongooseWrangler.gridfs = Grid(mongoose.connection.db)
 
   #
   # Connect Mongoose to mongoDB

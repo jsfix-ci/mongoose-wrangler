@@ -7,8 +7,8 @@
   "repository": "msmiley/mongoose-wrangler.git",
   "scripts": {
     "docs": "cake docs",
-    "prepublish": "cake build; cake test docs",
-    "test": "cake build; cake test"
+    "prepublish": "cake build && cake test docs",
+    "test": "cake build && cake test"
   },
   "devDependencies": {
     "docco": "*",
@@ -16,9 +16,17 @@
     "jasmine-node": "^1.14.5"
   },
   "dependencies": {
+    "gridfs-stream": "^1.1.1",
     "mongoose": "^3.8.24",
     "mongoose-datatable": "^0.3.1"
   },
-  "keywords": [],
+  "keywords": [
+    "mongoose",
+    "mongodb",
+    "gridfs",
+    "wrangler",
+    "datatables",
+    "datatable"
+  ],
   "license": "MIT"
 }
