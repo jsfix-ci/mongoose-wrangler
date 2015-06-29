@@ -2,11 +2,9 @@
 
 Wrangle up some Mongoose and plugins
 
-Mongoose Wrangler takes the guesswork out of managing a mongoose-powered connection to MongoDB. Mongoose provides auto-reconnect and other niceties, but there is still some setup involved. Wrangler attempts to automate as much as possible, including loading of mongoose model definition files.
+Mongoose Wrangler takes the guesswork out of managing mongoose-powered connections to MongoDB. Mongoose provides auto-reconnect and other niceties, but there is still some setup involved, especially with multiple connections. Wrangler attempts to automate as much as possible, including loading of mongoose model definition files for each connection.
 
 Mongoose Wrangler can also optionally register commonly-used mongoose plugins such as mongoose-datatable and gridfs-stream. Other plugins are easily added, so send in those PRs.
-
-In a nutshell, Mongoose Wrangler was created to handle boilerplate mongoose setup.
 
 ## Installation
 
@@ -27,6 +25,11 @@ mw = new MongooseWrangler
   datatable: true          # default: false
   gridfs: true             # default: false
   modelPath: "./db-models" # default: "./models"
+  additional: [            # optional array of additional connections
+    address: "127.0.0.1"
+    db: "otherDb"
+    modelPath: "./other"   # models to load specifically for additional connection
+  ]
 
 # manually disconnect
 mw.disconnect()
@@ -37,6 +40,21 @@ Depending on the project setup, using `mongoose = require('mongoose')` may point
 ```coffee
 mongoose = require('mongoose-wrangler').mongoose
 ```
+
+### Additional Connections
+
+Mongoose Wrangler handles multiple-connections with a few extra steps:
+
+1. Model files should export a function ```model(connection)``` which Mongoose Wrangler can call with the additional connection after it has been set up. i.e.:
+  ```coffee
+  exports.model = (connection) ->
+    connection.model "user", schema
+  ```
+1. Recall the model for an additional connection using the connection's index in the ```additional``` array:
+
+  ```coffee
+  MongooseWrangler.additional[0].model("my-model")
+  ```
 
 ### Express Streaming with GridFS
 

@@ -19,6 +19,8 @@ mongoose = require 'mongoose'
 class MongooseWrangler extends EventEmitter
   # Static property for accessing the mongoose wrangled by this module.
   @mongoose: mongoose
+  # array for additional connections specified by the additional: option array
+  @additional: []
   @gridfs: undefined
 
   constructor: (@options={}) ->
@@ -71,15 +73,23 @@ class MongooseWrangler extends EventEmitter
           @connect()
         , 1000
 
+    # load models for main connection
+    @loadModels @options.modelPath
 
+  loadModels: (modelPath, conn) ->
     # Find and load all mongoose models in the provided path
-    if fs.existsSync @options.modelPath
-      fs.readdirSync(@options.modelPath).forEach (file) =>
+    if fs.existsSync modelPath
+      fs.readdirSync(modelPath).forEach (file) =>
         if file.match /\.js|coffee$/
           console.log "Loading mongoose model: #{file}" if @options.debug
-          require path.join(@options.modelPath, file)
+          m = require path.join(modelPath, file)
+          if m.model # mongoose-wrangler standard export for non-self-registering model
+            if conn # if conn provided, use it, otherwise use base mongoose
+              m.model conn
+            else
+              m.model mongoose
     else
-      console.log "No mongoose models found in #{@options.modelPath}" if @options.debug
+      console.log "No mongoose models found in #{modelPath}" if @options.debug
 
   #
   # Register the mongoose-datatable plugin
@@ -116,6 +126,19 @@ class MongooseWrangler extends EventEmitter
           keepAlive: 1
     mongoose.connect uri, options
 
+    if @options.additional
+      for a in @options.additional
+        uri = "mongodb://#{a.address}/#{a.db}"
+        c = mongoose.createConnection uri, options
+        c.on 'connected', ->
+          console.log 'connected to additional'
+        # load models for additional connection if present
+        if a.modelPath
+          @loadModels a.modelPath, c
+
+        # add to array
+        MongooseWrangler.additional.push c
+
   #
   # Manually disconnect from mongoDB
   #
@@ -138,6 +161,6 @@ main = ->
 
   setTimeout ->
     x.disconnect()
-  , 5000
+  , 1000
 
 do main if require.main is module
