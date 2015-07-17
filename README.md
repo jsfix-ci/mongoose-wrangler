@@ -61,7 +61,11 @@ Mongoose Wrangler handles multiple-connections with a few extra steps:
 Take advantage of Node.js streaming with GridFS and Express.js. Requested files are streamed to client a chunk at a time instead of loading completely into memory.
 
 ```coffee
-gridfs = require('mongoose-wrangler').gridfs
+mw = require('mongoose-wrangler')
+gridfs = mw.gridfs
+
+# or for one of the "additional" connections:
+# gridfs = mw.Grid(mw.additional[0].db, mw.mongoose.mongo)
 
 exports.getFile = (req, res) ->
   options =

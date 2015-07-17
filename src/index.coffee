@@ -19,8 +19,11 @@ mongoose = require 'mongoose'
 class MongooseWrangler extends EventEmitter
   # Static property for accessing the mongoose wrangled by this module.
   @mongoose: mongoose
+  # Static property for Long type provided by mongodb
+  @Long: mongoose.mongo.Long
   # array for additional connections specified by the additional: option array
   @additional: []
+  @Grid: require 'gridfs-stream'
   @gridfs: undefined
 
   constructor: (@options={}) ->
@@ -88,6 +91,8 @@ class MongooseWrangler extends EventEmitter
               m.model conn
             else
               m.model mongoose
+          else if conn
+            console.log "WARNING: Connection was specified, but Model does not export model(connection) function"
     else
       console.log "No mongoose models found in #{modelPath}" if @options.debug
 
@@ -107,9 +112,8 @@ class MongooseWrangler extends EventEmitter
   #
   useGridFs: ->
     console.log "Registering gridfs-stream plugin" if @options.debug
-    Grid = require 'gridfs-stream'
-    Grid.mongo = mongoose.mongo
-    MongooseWrangler.gridfs = Grid(mongoose.connection.db)
+    MongooseWrangler.Grid.mongo = mongoose.mongo
+    MongooseWrangler.gridfs = MongooseWrangler.Grid(mongoose.connection.db)
 
   #
   # Connect Mongoose to mongoDB
@@ -158,9 +162,5 @@ module.exports = MongooseWrangler
 main = ->
   x = new MongooseWrangler
     debug: true
-
-  setTimeout ->
-    x.disconnect()
-  , 1000
 
 do main if require.main is module
