@@ -1,6 +1,6 @@
 {
   "name": "mongoose-wrangler",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Mike Smiley <msmiley@alumni.rice.edu>",
   "url": "https://github.com/msmiley/mongoose-wrangler",
   "main": "./lib",
