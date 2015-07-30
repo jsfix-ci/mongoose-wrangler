@@ -136,6 +136,9 @@ class MongooseWrangler extends EventEmitter
         c = mongoose.createConnection uri, options
         c.on 'connected', ->
           console.log 'connected to additional'
+        # Handle mongoose 'error' event.
+        c.on 'error', (err) ->
+          console.log "mongoose-wrangler: additional mongoDB error: #{err}"
         # load models for additional connection if present
         if a.modelPath
           @loadModels a.modelPath, c
