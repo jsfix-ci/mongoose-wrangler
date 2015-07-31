@@ -50,7 +50,7 @@ Mongoose Wrangler handles multiple-connections with a few extra steps:
   exports.model = (connection) ->
     connection.model "user", schema
   ```
-1. Recall the model for an additional connection using the connection's index in the ```additional``` array:
+2. Recall the model for an additional connection using the connection's index in the ```additional``` array:
 
   ```coffee
   MongooseWrangler.additional[0].model("my-model")
