@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "gridfs-stream": "^1.1.1",
-    "mongoose": "^4.1.0",
+    "mongoose": "^5.13.14",
     "mongoose-datatable": "^0.3.1"
   },
   "keywords": [
